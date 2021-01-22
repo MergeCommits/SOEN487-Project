@@ -1,5 +1,5 @@
 
-package com.example.rest;
+package com.thing.rest;
 
 public class Book {
     private String title;

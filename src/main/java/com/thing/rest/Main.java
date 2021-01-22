@@ -1,4 +1,4 @@
-package com.example.rest;
+package com.thing.rest;
 
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;

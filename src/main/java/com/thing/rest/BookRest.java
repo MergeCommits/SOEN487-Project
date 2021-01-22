@@ -1,5 +1,5 @@
 
-package com.example.rest;
+package com.thing.rest;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
