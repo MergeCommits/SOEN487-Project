@@ -5,4 +5,5 @@ public interface AlbumRepository {
     Album getAlbum(String isrc);
     boolean updateAlbum(Album p);
     boolean removeAlbum(String isrc);
+    String listAlbums();
 }

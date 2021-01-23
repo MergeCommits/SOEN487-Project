@@ -3,30 +3,21 @@ package com.thing.impl;
 import com.thing.core.Album;
 import com.thing.core.AlbumRepository;
 
-import javax.servlet.ServletContext;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class AlbumRepositoryImpl implements AlbumRepository {
-    private List<Album> albumCollection;
+    private final List<Album> albumCollection;
 
     public AlbumRepositoryImpl() {
         albumCollection = new ArrayList<Album>();
     }
 
-    public List<Album> getCollection() {
-        return this.albumCollection;
-    }
-
     @Override
     public boolean addAlbum(Album album) {
-        Optional<Album> matchingID = getCollection()
+        Optional<Album> matchingID = albumCollection
                 .stream()
-                .filter(a -> album.getIsrc().equals(a.getIsrc()))
+                .filter(a -> a.getIsrc().equals(album.getIsrc()))
                 .findFirst();
 
         if (matchingID.isPresent()) {
@@ -39,17 +30,19 @@ public class AlbumRepositoryImpl implements AlbumRepository {
 
     @Override
     public Album getAlbum(String isrc) {
-
+        return albumCollection
+                .stream()
+                .filter(a -> isrc.equals(a.getIsrc()))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
     public boolean updateAlbum(Album album) {
-        List<Album> collection = getCollection();
-
         int index;
         boolean found = false;
-        for (index = 0; index < collection.size(); index++) {
-            if (collection.get(index).getIsrc().equals(album.getIsrc())) {
+        for (index = 0; index < albumCollection.size(); index++) {
+            if (albumCollection.get(index).getIsrc().equals(album.getIsrc())) {
                 found = true;
                 break;
             }
@@ -59,12 +52,18 @@ public class AlbumRepositoryImpl implements AlbumRepository {
             return false;
         }
 
-        collection.set(index, album);
+        albumCollection.set(index, album);
         return true;
     }
 
     @Override
     public boolean removeAlbum(String isrc) {
+        return albumCollection.removeIf(a -> a.getIsrc().equals(isrc));
+    }
 
+    public String listAlbums() {
+        return albumCollection.stream()
+                .map(Album::toString)
+                .collect(Collectors.joining("\n"));
     }
 }

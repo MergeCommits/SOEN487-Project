@@ -31,14 +31,14 @@ public class Album implements Comparable<Album> {
         this.year = year;
     }
 
-    private Artist artist;
+    private String artistNickname;
 
-    public Artist getArtist() {
-        return artist;
+    public String getArtistNickname() {
+        return artistNickname;
     }
 
-    public void setArtist(Artist artist) {
-        this.artist = artist;
+    public void setArtistNickname(String artistNickname) {
+        this.artistNickname = artistNickname;
     }
 
     private String description;
@@ -51,20 +51,36 @@ public class Album implements Comparable<Album> {
         this.description = description;
     }
 
-    public Album(String isrc, String title, int year, Artist artist, String description) {
+    public Album(String isrc, String title, int year, String artistNickname, String description) {
         this.isrc = isrc;
         this.title = title;
         this.year = year;
-        this.artist = artist;
+        this.artistNickname = artistNickname;
         this.description = description;
     }
 
     public Album(String isrc, String title, int year, String description) {
-        this(isrc, title, year, null, description);
+        this(isrc, title, year, "", description);
     }
 
     @Override
     public int compareTo(Album o) {
         return getIsrc().compareTo(o.getIsrc());
+    }
+
+    @Override
+    public String toString() {
+        return title + "{" +
+                "isrc='" + isrc + '\'' +
+                ", year=" + year +
+                ", artist=" + artistNickname +
+                ", description='" + description + '\'' +
+                '}';
+    }
+
+    public String toStringIRSCAndTitle() {
+        return title + "{" +
+                "isrc='" + isrc + '\'' +
+                '}';
     }
 }
