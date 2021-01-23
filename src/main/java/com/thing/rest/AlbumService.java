@@ -15,12 +15,12 @@ public class AlbumService {
     @GET
     @Path("all")
     @Produces(MediaType.TEXT_PLAIN)
-    public Response getAlbum() {
+    public Response listAlbums() {
         return Response.ok(albumRepository.listAlbums()).build();
     }
 
     @GET
-    @Path("{isrc}")
+    @Path("get/{isrc}")
     @Produces(MediaType.TEXT_PLAIN)
     public Response getAlbum(@PathParam("isrc") String isrc) {
         Album result = albumRepository.getAlbum(isrc);
@@ -47,5 +47,36 @@ public class AlbumService {
         }
 
         return Response.ok(newAlbum.toString()).build();
+    }
+
+    @PUT
+    @Path("update")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response updateAlbum(@FormParam("isrc") String isrc,
+                                @FormParam("title") String title,
+                                @FormParam("year") int year,
+                                @FormParam("artist") String artist,
+                                @FormParam("desc") String description) {
+        Album newAlbum = new Album(isrc, title, year, description);
+
+        boolean updatedSuccessfully = albumRepository.updateAlbum(newAlbum);
+        if (!updatedSuccessfully) {
+            return Response.status(400).entity("Album with that isrc does not exist.").build();
+        }
+
+        return Response.ok(newAlbum.toString()).build();
+    }
+
+    @DELETE
+    @Path("delete/{isrc}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response deleteAlbum(@PathParam("isrc") String isrc) {
+        boolean deletedSuccessfully = albumRepository.removeAlbum(isrc);
+        if (!deletedSuccessfully) {
+            return Response.status(400).entity("Album with that isrc does not exist.").build();
+        }
+
+        return Response.ok("Album deleted. ").build();
     }
 }

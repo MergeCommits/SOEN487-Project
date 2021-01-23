@@ -63,7 +63,7 @@ public class AlbumRepositoryImpl implements AlbumRepository {
 
     public String listAlbums() {
         return albumCollection.stream()
-                .map(Album::toString)
+                .map(Album::toStringIRSCAndTitle)
                 .collect(Collectors.joining("\n"));
     }
 }
