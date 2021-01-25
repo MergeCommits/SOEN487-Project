@@ -19,7 +19,7 @@ public class ConsoleClient {
     enum State {
         MainMenu,
         AlbumRepo,
-        HIGH
+        ArtistRepo
     }
 
     private State currState = State.MainMenu;
@@ -57,6 +57,11 @@ public class ConsoleClient {
                 updateAlbumRepo();
             }
             break;
+
+            case ArtistRepo: {
+                updateArtistRepo();
+            }
+            break;
         }
     }
 
@@ -79,7 +84,7 @@ public class ConsoleClient {
                 break;
 
                 case ARTIST: {
-                    System.out.println(ARTIST);
+                    currState = State.ArtistRepo;
                 }
                 break;
 
@@ -266,6 +271,186 @@ public class ConsoleClient {
 
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpDelete httpDelete = new HttpDelete("http://localhost:8080/myapp/album/delete/" + isrc);
+
+        HttpResponse httpResponse = httpClient.execute(httpDelete);
+        HttpEntity responseEntity = httpResponse.getEntity();
+        String responseBody = responseEntity != null ? EntityUtils.toString(responseEntity) : null;
+
+        System.out.println(responseBody);
+        httpClient.close();
+
+        System.out.print("Press enter to continue.");
+        keyboardScanner.nextLine();
+    }
+
+    private void updateArtistRepo() throws IOException {
+        System.out.print("Select an option below:\n\n");
+
+        final int FIND = 1, LIST = 2, ADD = 3, UPDATE = 4, DELETE = 5, EXIT = 6;
+
+        System.out.println(FIND + ". Find an artist");
+        System.out.println(LIST + ". List all artists");
+        System.out.println(ADD + ". Add an artist");
+        System.out.println(UPDATE + ". Update an artist");
+        System.out.println(DELETE + ". Delete an artist");
+        System.out.println(EXIT + ". Back to main menu");
+
+        int choice = 0;
+        do {
+            choice = getInlineInteger("\nChoice");
+            switch (choice) {
+                case FIND: {
+                    getArtist();
+                }
+                break;
+
+                case LIST: {
+                    listArtists();
+                }
+                break;
+
+                case ADD: {
+                    addArtist();
+                }
+                break;
+
+                case UPDATE: {
+                    updateArtist();
+                }
+                break;
+
+                case DELETE: {
+                    deleteArtist();
+                }
+                break;
+
+                case EXIT: {
+                    currState = State.MainMenu;
+                }
+                break;
+
+                default: {
+                    choice = -1;
+                    System.out.print("Please select a valid choice.");
+                }
+            }
+        } while (choice < 0);
+    }
+
+    private void getArtist() throws IOException {
+        String nickname = getInlineString("Enter the nickname of the artist you wish to view");
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpGet httpGet = new HttpGet("http://localhost:8080/myapp/artist/get/" + nickname);
+
+        HttpResponse httpResponse = httpClient.execute(httpGet);
+        HttpEntity responseEntity = httpResponse.getEntity();
+        String responseBody = responseEntity != null ? EntityUtils.toString(responseEntity) : null;
+
+        System.out.println(responseBody);
+        httpClient.close();
+
+        System.out.print("Press enter to continue.");
+        keyboardScanner.nextLine();
+    }
+
+    private void listArtists() throws IOException {
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpGet httpGet = new HttpGet("http://localhost:8080/myapp/artist/all");
+
+        HttpResponse httpResponse = httpClient.execute(httpGet);
+        HttpEntity responseEntity = httpResponse.getEntity();
+        String responseBody = responseEntity != null ? EntityUtils.toString(responseEntity) : null;
+
+        System.out.println(responseBody);
+        httpClient.close();
+
+        System.out.print("Press enter to continue.");
+        keyboardScanner.nextLine();
+    }
+
+    private void addArtist() throws IOException {
+        System.out.println("Start entering the artist's info below:");
+        String nickname = getInlineString("Nickname");
+        String firstName = getInlineString("First name");
+        String lastName = getInlineString("Last name");
+        String bio = getInlineString("Bio (optional)", true);
+        System.out.println();
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpPost httpPost = new HttpPost("http://localhost:8080/myapp/artist/insert");
+        List<NameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair("nickname", nickname));
+        params.add(new BasicNameValuePair("first", firstName));
+        params.add(new BasicNameValuePair("last", lastName));
+        params.add(new BasicNameValuePair("bio", bio));
+        httpPost.setEntity(new UrlEncodedFormEntity(params));
+
+        HttpResponse httpResponse = httpClient.execute(httpPost);
+        HttpEntity responseEntity = httpResponse.getEntity();
+        String responseBody = responseEntity != null ? EntityUtils.toString(responseEntity) : null;
+
+        if (httpResponse.getStatusLine().getStatusCode() == 200) {
+            System.out.println("Artist added successfully.");
+        } else {
+            System.out.println("Artist wasn't added.");
+        }
+
+        System.out.println("API responded with: " + responseBody);
+        httpClient.close();
+
+        System.out.print("Press enter to continue.");
+        keyboardScanner.nextLine();
+    }
+
+    private void updateArtist() throws IOException {
+        String nickname = getInlineString("Enter the nickname of the artist you wish to modify");
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpGet httpGet = new HttpGet("http://localhost:8080/myapp/artist/get/" + nickname);
+
+        HttpResponse httpResponse = httpClient.execute(httpGet);
+        HttpEntity responseEntity = httpResponse.getEntity();
+        String responseBody = responseEntity != null ? EntityUtils.toString(responseEntity) : null;
+
+        if (httpResponse.getStatusLine().getStatusCode() != 200) {
+            System.out.println("An artist with that isrc wasn't found.");
+        } else {
+            System.out.println(responseBody);
+            System.out.println();
+
+            String firstName = getInlineString("First name");
+            String lastName = getInlineString("Last name");
+            String bio = getInlineString("Bio (optional)", true);
+            System.out.println();
+
+            httpClient.close();
+            httpClient = HttpClients.createDefault();
+            HttpPut httpPut = new HttpPut("http://localhost:8080/myapp/artist/update");
+            List<NameValuePair> params = new ArrayList<>();
+            params.add(new BasicNameValuePair("nickname", nickname));
+            params.add(new BasicNameValuePair("first", firstName));
+            params.add(new BasicNameValuePair("last", lastName));
+            params.add(new BasicNameValuePair("bio", bio));
+            httpPut.setEntity(new UrlEncodedFormEntity(params));
+
+            httpResponse = httpClient.execute(httpPut);
+            responseEntity = httpResponse.getEntity();
+            responseBody = responseEntity != null ? EntityUtils.toString(responseEntity) : null;
+
+            System.out.println("API responded with: " + responseBody);
+            httpClient.close();
+        }
+
+        System.out.print("Press enter to continue.");
+        keyboardScanner.nextLine();
+    }
+
+    private void deleteArtist() throws IOException {
+        String isrc = getInlineString("Enter the nickname of the artist you wish to delete");
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpDelete httpDelete = new HttpDelete("http://localhost:8080/myapp/artist/delete/" + isrc);
 
         HttpResponse httpResponse = httpClient.execute(httpDelete);
         HttpEntity responseEntity = httpResponse.getEntity();
