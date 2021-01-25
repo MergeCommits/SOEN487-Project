@@ -55,4 +55,21 @@ public class Artist implements Comparable<Artist> {
     public int compareTo(Artist o) {
         return getNickname().compareTo(o.getNickname());
     }
+
+    @Override
+    public String toString() {
+        return "Artist{" +
+            "nickname='" + nickname + '\'' +
+            ", firstName='" + firstName + '\'' +
+            ", lastName='" + lastName + '\'' +
+            ", bio='" + bio + '\'' +
+            '}';
+    }
+
+    public String toStringNicknameAndFullname() {
+        return nickname + "{" +
+            "firstName='" + firstName + '\'' +
+            ", lastName='" + lastName + '\'' +
+            '}';
+    }
 }
