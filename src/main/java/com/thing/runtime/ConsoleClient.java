@@ -3,16 +3,17 @@ package com.thing.runtime;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -36,7 +37,7 @@ public class ConsoleClient {
         this.quit = quit;
     }
 
-    private Scanner keyboardScanner;
+    private final Scanner keyboardScanner;
 
     public ConsoleClient() {
         keyboardScanner = new Scanner(System.in);
@@ -130,7 +131,7 @@ public class ConsoleClient {
                 break;
 
                 case UPDATE: {
-                    System.out.println(UPDATE);
+                    updateAlbum();
                 }
                 break;
 
@@ -155,7 +156,7 @@ public class ConsoleClient {
         String desc = getInlineString("Description (optional)", true);
         System.out.println();
 
-        CloseableHttpClient httpclient = HttpClients.createDefault();
+        CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost("http://localhost:8080/myapp/album/insert");
         List<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("isrc", isrc));
@@ -164,7 +165,7 @@ public class ConsoleClient {
         params.add(new BasicNameValuePair("desc", desc));
         httpPost.setEntity(new UrlEncodedFormEntity(params));
 
-        HttpResponse httpResponse = httpclient.execute(httpPost);
+        HttpResponse httpResponse = httpClient.execute(httpPost);
         HttpEntity responseEntity = httpResponse.getEntity();
         String responseBody = responseEntity != null ? EntityUtils.toString(responseEntity) : null;
 
@@ -174,7 +175,53 @@ public class ConsoleClient {
             System.out.println("Album wasn't added.");
         }
 
+        httpClient.close();
+
         System.out.println("API responded with: " + responseBody);
+        System.out.print("Press enter to continue.");
+        keyboardScanner.nextLine();
+    }
+
+    private void updateAlbum() throws IOException {
+        String isrc = getInlineString("Enter the ISRC of the album you wish to modify");
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpGet httpGet = new HttpGet("http://localhost:8080/myapp/album/get/" + isrc);
+
+        HttpResponse httpResponse = httpClient.execute(httpGet);
+        HttpEntity responseEntity = httpResponse.getEntity();
+        String responseBody = responseEntity != null ? EntityUtils.toString(responseEntity) : null;
+
+        if (httpResponse.getStatusLine().getStatusCode() != 200) {
+            System.out.println("An album with that isrc wasn't found.");
+        } else {
+            System.out.println(responseBody);
+            System.out.println();
+
+            String title = getInlineString("Title");
+            int year = getInlineInteger("Release Year");
+            String artist = getInlineString("Artist's nickname (optional)", true);
+            String desc = getInlineString("Description (optional)", true);
+            System.out.println();
+
+            httpClient.close();
+            httpClient = HttpClients.createDefault();
+            HttpPut httpPut = new HttpPut("http://localhost:8080/myapp/album/update");
+            List<NameValuePair> params = new ArrayList<>();
+            params.add(new BasicNameValuePair("isrc", isrc));
+            params.add(new BasicNameValuePair("title", title));
+            params.add(new BasicNameValuePair("year", Integer.toString(year)));
+            params.add(new BasicNameValuePair("artist", artist));
+            params.add(new BasicNameValuePair("desc", desc));
+            httpPut.setEntity(new UrlEncodedFormEntity(params));
+
+            httpResponse = httpClient.execute(httpPut);
+            responseEntity = httpResponse.getEntity();
+            responseBody = responseEntity != null ? EntityUtils.toString(responseEntity) : null;
+
+            System.out.println("API responded with: " + responseBody);
+        }
+
         System.out.print("Press enter to continue.");
         keyboardScanner.nextLine();
     }
