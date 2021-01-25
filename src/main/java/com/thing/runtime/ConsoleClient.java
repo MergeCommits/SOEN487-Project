@@ -414,7 +414,7 @@ public class ConsoleClient {
         String responseBody = responseEntity != null ? EntityUtils.toString(responseEntity) : null;
 
         if (httpResponse.getStatusLine().getStatusCode() != 200) {
-            System.out.println("An artist with that isrc wasn't found.");
+            System.out.println("An artist with that nickname wasn't found.");
         } else {
             System.out.println(responseBody);
             System.out.println();
