@@ -4,10 +4,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPatch;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.*;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
@@ -116,12 +113,12 @@ public class ConsoleClient {
             choice = getInlineInteger("\nChoice");
             switch (choice) {
                 case FIND: {
-                    System.out.println(FIND);
+                    getAlbum();
                 }
                 break;
 
                 case LIST: {
-                    System.out.println(LIST);
+                    listAlbums();
                 }
                 break;
 
@@ -132,6 +129,11 @@ public class ConsoleClient {
 
                 case UPDATE: {
                     updateAlbum();
+                }
+                break;
+
+                case DELETE: {
+                    deleteAlbum();
                 }
                 break;
 
@@ -146,6 +148,38 @@ public class ConsoleClient {
                 }
             }
         } while (choice < 0);
+    }
+
+    private void getAlbum() throws IOException {
+        String isrc = getInlineString("Enter the ISRC of the album you wish to view");
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpGet httpGet = new HttpGet("http://localhost:8080/myapp/album/get/" + isrc);
+
+        HttpResponse httpResponse = httpClient.execute(httpGet);
+        HttpEntity responseEntity = httpResponse.getEntity();
+        String responseBody = responseEntity != null ? EntityUtils.toString(responseEntity) : null;
+
+        System.out.println(responseBody);
+        httpClient.close();
+
+        System.out.print("Press enter to continue.");
+        keyboardScanner.nextLine();
+    }
+
+    private void listAlbums() throws IOException {
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpGet httpGet = new HttpGet("http://localhost:8080/myapp/album/all");
+
+        HttpResponse httpResponse = httpClient.execute(httpGet);
+        HttpEntity responseEntity = httpResponse.getEntity();
+        String responseBody = responseEntity != null ? EntityUtils.toString(responseEntity) : null;
+
+        System.out.println(responseBody);
+        httpClient.close();
+
+        System.out.print("Press enter to continue.");
+        keyboardScanner.nextLine();
     }
 
     private void addAlbum() throws IOException {
@@ -175,9 +209,9 @@ public class ConsoleClient {
             System.out.println("Album wasn't added.");
         }
 
+        System.out.println("API responded with: " + responseBody);
         httpClient.close();
 
-        System.out.println("API responded with: " + responseBody);
         System.out.print("Press enter to continue.");
         keyboardScanner.nextLine();
     }
@@ -220,7 +254,25 @@ public class ConsoleClient {
             responseBody = responseEntity != null ? EntityUtils.toString(responseEntity) : null;
 
             System.out.println("API responded with: " + responseBody);
+            httpClient.close();
         }
+
+        System.out.print("Press enter to continue.");
+        keyboardScanner.nextLine();
+    }
+
+    private void deleteAlbum() throws IOException {
+        String isrc = getInlineString("Enter the ISRC of the album you wish to delete");
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpDelete httpDelete = new HttpDelete("http://localhost:8080/myapp/album/delete/" + isrc);
+
+        HttpResponse httpResponse = httpClient.execute(httpDelete);
+        HttpEntity responseEntity = httpResponse.getEntity();
+        String responseBody = responseEntity != null ? EntityUtils.toString(responseEntity) : null;
+
+        System.out.println(responseBody);
+        httpClient.close();
 
         System.out.print("Press enter to continue.");
         keyboardScanner.nextLine();

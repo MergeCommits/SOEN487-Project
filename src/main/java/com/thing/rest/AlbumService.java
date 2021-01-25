@@ -77,6 +77,6 @@ public class AlbumService {
             return Response.status(400).entity("Album with that isrc does not exist.").build();
         }
 
-        return Response.ok("Album deleted. ").build();
+        return Response.ok("Album deleted.").build();
     }
 }
