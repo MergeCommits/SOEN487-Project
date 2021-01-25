@@ -1,5 +1,6 @@
-package com.thing.rest;
+package com.thing.runtime;
 
+import com.thing.runtime.ConsoleClient;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -33,9 +34,14 @@ public class Main {
         final HttpServer server = startServer();
 
         System.out.printf("Jersey app started with WADL available at "
-                + "%sapplication.wadl\nHit enter to stop it...%n", BASE_URI);
-        System.in.read();
+                + "%sapplication.wadl\n\n\n", BASE_URI);
 
+        ConsoleClient consoleClient = new ConsoleClient();
+        while (!consoleClient.wantsToQuit()) {
+            consoleClient.update();
+        }
+
+        consoleClient.quit();
         server.shutdownNow();
     }
 }

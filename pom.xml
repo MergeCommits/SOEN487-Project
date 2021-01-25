@@ -69,7 +69,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>com.thing.rest.Main</mainClass>
+                    <mainClass>com.thing.runtime.Main</mainClass>
                 </configuration>
             </plugin>
         </plugins>
