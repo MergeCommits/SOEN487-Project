@@ -153,6 +153,7 @@ public class ConsoleClient {
         String title = getInlineString("Title");
         int year = getInlineInteger("Release Year");
         String desc = getInlineString("Description (optional)", true);
+        System.out.println();
 
         CloseableHttpClient httpclient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost("http://localhost:8080/myapp/album/insert");
@@ -165,7 +166,17 @@ public class ConsoleClient {
 
         HttpResponse httpResponse = httpclient.execute(httpPost);
         HttpEntity responseEntity = httpResponse.getEntity();
-        System.out.println(responseEntity != null ? EntityUtils.toString(responseEntity) : null);
+        String responseBody = responseEntity != null ? EntityUtils.toString(responseEntity) : null;
+
+        if (httpResponse.getStatusLine().getStatusCode() == 200) {
+            System.out.println("Album added successfully.");
+        } else {
+            System.out.println("Album wasn't added.");
+        }
+
+        System.out.println("API responded with: " + responseBody);
+        System.out.print("Press enter to continue.");
+        keyboardScanner.nextLine();
     }
 
     private String getInlineString(String msg, boolean optional) {
