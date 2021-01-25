@@ -1,5 +1,20 @@
 package com.thing.runtime;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleClient {
@@ -31,7 +46,7 @@ public class ConsoleClient {
         keyboardScanner.close();
     }
 
-    public void update() {
+    public void update() throws IOException {
         System.out.print("\n\n=================\n\n");
 
         switch (currState) {
@@ -83,7 +98,7 @@ public class ConsoleClient {
         } while (choice < 0);
     }
 
-    private void updateAlbumRepo() {
+    private void updateAlbumRepo() throws IOException {
         System.out.print("Select an option below:\n\n");
 
         final int FIND = 1, LIST = 2, ADD = 3, UPDATE = 4, DELETE = 5, EXIT = 6;
@@ -110,7 +125,7 @@ public class ConsoleClient {
                 break;
 
                 case ADD: {
-                    System.out.println(ADD);
+                    addAlbum();
                 }
                 break;
 
@@ -132,9 +147,39 @@ public class ConsoleClient {
         } while (choice < 0);
     }
 
+    private void addAlbum() throws IOException {
+        System.out.println("Start entering the album's info below:");
+        String isrc = getInlineString("ISRC");
+        String title = getInlineString("Title");
+        int year = getInlineInteger("Release Year");
+        String desc = getInlineString("Description (optional)", true);
+
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        HttpPost httpPost = new HttpPost("http://localhost:8080/myapp/album/insert");
+        List<NameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair("isrc", isrc));
+        params.add(new BasicNameValuePair("title", title));
+        params.add(new BasicNameValuePair("year", Integer.toString(year)));
+        params.add(new BasicNameValuePair("desc", desc));
+        httpPost.setEntity(new UrlEncodedFormEntity(params));
+
+        HttpResponse httpResponse = httpclient.execute(httpPost);
+        HttpEntity responseEntity = httpResponse.getEntity();
+        System.out.println(responseEntity != null ? EntityUtils.toString(responseEntity) : null);
+    }
+
+    private String getInlineString(String msg, boolean optional) {
+        String val = "";
+        do {
+            System.out.print(msg + ": ");
+            val = keyboardScanner.nextLine();
+        } while (!optional && val.trim().length() == 0);
+
+        return val;
+    }
+
     private String getInlineString(String msg) {
-        System.out.print(msg + ": ");
-        return keyboardScanner.nextLine();
+        return getInlineString(msg, false);
     }
 
     private int getInlineInteger(String msg) {

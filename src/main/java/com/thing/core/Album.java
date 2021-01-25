@@ -73,7 +73,7 @@ public class Album implements Comparable<Album> {
         return title + "{" +
                 "isrc='" + isrc + '\'' +
                 ", year=" + year +
-                ", artist=" + artistNickname +
+                ", artist='" + artistNickname + '\'' +
                 ", description='" + description + '\'' +
                 '}';
     }
