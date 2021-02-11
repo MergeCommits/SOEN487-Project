@@ -58,7 +58,7 @@ public class AlbumService {
                                 @FormParam("year") int year,
                                 @FormParam("artist") String artist,
                                 @FormParam("desc") String description) {
-        Album newAlbum = new Album(isrc, title, year, description);
+        Album newAlbum = new Album(isrc, title, year, artist, description);
 
         boolean updatedSuccessfully = albumRepository.updateAlbum(newAlbum);
         if (!updatedSuccessfully) {
