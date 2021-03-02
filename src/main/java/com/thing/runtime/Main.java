@@ -1,12 +1,19 @@
 package com.thing.runtime;
 
-import com.thing.runtime.ConsoleClient;
+import com.thing.core.Employee;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.boot.Metadata;
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistry;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
-import java.io.IOException;
 import java.net.URI;
+import java.net.URL;
 
 /**
  * Main class.
@@ -30,19 +37,40 @@ public class Main {
         return GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
     }
 
-    public static void main(String[] args) throws IOException {
-        final HttpServer server = startServer();
+//    public static void main(String[] args) throws IOException {
+//        final HttpServer server = startServer();
+//
+//        System.out.printf("Jersey app started with WADL available at "
+//                + "%sapplication.wadl\n\n\n", BASE_URI);
+//
+//        Scanner kb = new Scanner(System.in);
+//        kb.nextLine();
+//
+//        server.stop();
+//    }
 
-        System.out.printf("Jersey app started with WADL available at "
-                + "%sapplication.wadl\n\n\n", BASE_URI);
+    public static void main(String[] args) {
+//        URL url = Thread.currentThread().getContextClassLoader()
+//            .getResource("javax/persistence/Table.class");
+//        System.out.println(url);
+        StandardServiceRegistry ssr = new StandardServiceRegistryBuilder().configure("hibernate.cfg.xml").build();
+        Metadata meta = new MetadataSources(ssr).getMetadataBuilder().build();
 
-        ConsoleClient consoleClient = new ConsoleClient();
-        while (!consoleClient.wantsToQuit()) {
-            consoleClient.update();
-        }
+        SessionFactory factory = meta.getSessionFactoryBuilder().build();
+        Session session = factory.openSession();
+        Transaction t = session.beginTransaction();
 
-        consoleClient.quit();
-        server.shutdownNow();
+        Employee e1=new Employee();
+        e1.setId(101);
+        e1.setFirstName("Gaurav");
+        e1.setLastName("Chawla");
+
+        session.save(e1);
+        t.commit();
+        System.out.println("successfully saved");
+        factory.close();
+        session.close();
+
     }
 }
 
