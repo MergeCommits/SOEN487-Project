@@ -5,10 +5,10 @@ import java.util.Date;
 
 @Entity
 @Table(name = "log")
-public class Log {
-    public final String CHANGE_CREATE = "CREATE";
-    public final String CHANGE_UPDATE = "UPDATE";
-    public final String CHANGE_DELETE = "DELETE";
+public class Log implements Comparable<Log> {
+    public static final String TYPE_CREATE = "CREATE";
+    public static final String TYPE_UPDATE = "UPDATE";
+    public static final String TYPE_DELETE = "DELETE";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +24,38 @@ public class Log {
 
     private String change;
 
+    public String getChange() {
+        return change;
+    }
+
+    public void setChange(String change) {
+        this.change = change;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public Album getAlbum() {
+        return album;
+    }
+
+    public void setAlbum(Album album) {
+        this.album = album;
+    }
+
+    public String getAlbumISRC() {
+        return albumISRC;
+    }
+
+    public void setAlbumISRC(String albumISRC) {
+        this.albumISRC = albumISRC;
+    }
+
     private Date timestamp;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -32,4 +64,13 @@ public class Log {
 
     @Column(name = "album_isrc")
     private String albumISRC;
+
+    public Log() {
+        setTimestamp(new Date());
+    }
+
+    @Override
+    public int compareTo(Log o) {
+        return getTimestamp().compareTo(o.getTimestamp());
+    }
 }

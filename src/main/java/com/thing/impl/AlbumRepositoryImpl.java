@@ -1,59 +1,182 @@
 package com.thing.impl;
 
-import com.thing.core.Album;
-import com.thing.core.AlbumRepository;
+import com.thing.core.*;
+import org.hibernate.query.Query;
 
+import javax.persistence.NoResultException;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class AlbumRepositoryImpl implements AlbumRepository {
-    private final List<Album> albumCollection;
+    private void performLog(String logType, Album album) {
+        try (HibernateSession session = HibernateUtil.startSession()) {
+            Log log = new Log();
+            log.setAlbum(album);
+            log.setAlbumISRC(album.getIsrc());
+            log.setChange(logType);
 
-    public AlbumRepositoryImpl() {
-        albumCollection = new ArrayList<Album>();
+            session.save(log);
+        }
     }
 
+    @Override
     public boolean addAlbum(Album album) {
-        Optional<Album> matchingID = albumCollection
+        try (HibernateSession session = HibernateUtil.startSession()) {
+            Query<Album> query = session.createQuery("from Album");
+            List<Album> albumCollection = query.list();
+
+            Optional<Album> matchingID = albumCollection
                 .stream()
-                .filter(a -> a.getIsrc().equals(album.getIsrc()))
+                .filter(a -> a.equals(album))
                 .findFirst();
 
-        if (matchingID.isPresent()) {
-            return false;
-        }
+            if (matchingID.isPresent()) {
+                return false;
+            }
 
-        albumCollection.add(album);
-        return true;
+            session.save(album);
+            performLog(Log.TYPE_CREATE, album);
+
+            return true;
+        }
     }
 
+    @Override
     public boolean updateAlbum(Album album) {
-        int index;
-        boolean found = false;
-        for (index = 0; index < albumCollection.size(); index++) {
-            if (albumCollection.get(index).getIsrc().equals(album.getIsrc())) {
-                found = true;
-                break;
+        try (HibernateSession session = HibernateUtil.startSession()) {
+            Query<Album> query = session.createQuery("from Album as a where a.isrc = :isrc");
+            query.setParameter("isrc", album.getIsrc());
+
+            try {
+                Album found = query.getSingleResult();
+                album.setId(found.getId());
+                session.save(album);
+                performLog(Log.TYPE_UPDATE, album);
+
+                return true;
+            } catch (NoResultException _e) {
+                return false;
             }
         }
-
-        if (!found) {
-            return false;
-        }
-
-        albumCollection.set(index, album);
-        return true;
     }
 
+    @Override
     public boolean removeAlbum(String isrc) {
-        return albumCollection.removeIf(a -> a.getIsrc().equals(isrc));
+        try (HibernateSession session = HibernateUtil.startSession()) {
+            Query<Album> query = session.createQuery("from Album as a where a.isrc = :isrc");
+            query.setParameter("isrc", isrc);
+            try {
+                Album album = query.getSingleResult();
+                performLog(Log.TYPE_DELETE, album);
+                session.delete(album);
+
+                return true;
+            } catch (NoResultException _e) {
+                return false;
+            }
+
+        }
     }
 
+    @Override
     public Album getAlbum(String isrc) {
-        return albumCollection
-            .stream()
-            .filter(a -> isrc.equals(a.getIsrc()))
-            .findFirst()
-            .orElse(null);
+        try (HibernateSession session = HibernateUtil.startSession()) {
+            Query<Album> query = session.createQuery("from Album as a where a.isrc = :isrc");
+            query.setParameter("isrc", isrc);
+            try {
+                return query.getSingleResult();
+            } catch (NoResultException _e) {
+                return null;
+            }
+
+        }
+    }
+
+    @Override
+    public List<Album> allAlbums() {
+        try (HibernateSession session = HibernateUtil.startSession()) {
+            Query<Album> query = session.createQuery("from Album");
+            return query.list().stream().sorted().collect(Collectors.toList());
+        }
+    }
+
+    @Override
+    public boolean updateAlbumImage(String isrc, AlbumCoverImage albumCoverImage) {
+        try (HibernateSession session = HibernateUtil.startSession()) {
+            Query<Album> query = session.createQuery("from Album as a where a.isrc = :isrc");
+            query.setParameter("isrc", isrc);
+
+            try {
+                Album found = query.getSingleResult();
+                found.setCoverImage(albumCoverImage);
+                session.save(found);
+                performLog(Log.TYPE_UPDATE, found);
+
+                return true;
+            } catch (NoResultException _e) {
+                return false;
+            }
+        }
+    }
+
+    @Override
+    public boolean removeAlbumImage(String isrc) {
+        try (HibernateSession session = HibernateUtil.startSession()) {
+            Query<Album> query = session.createQuery("from Album as a where a.isrc = :isrc");
+            query.setParameter("isrc", isrc);
+
+            try {
+                Album found = query.getSingleResult();
+                found.setCoverImage(null);
+                session.save(found);
+                performLog(Log.TYPE_UPDATE, found);
+
+                return true;
+            } catch (NoResultException _e) {
+                return false;
+            }
+        }
+    }
+
+    @Override
+    public AlbumCoverImage getAlbumImage(String isrc) {
+        try (HibernateSession session = HibernateUtil.startSession()) {
+            Query<Album> query = session.createQuery("from Album as a where a.isrc = :isrc");
+            query.setParameter("isrc", isrc);
+
+            try {
+                Album found = query.getSingleResult();
+                return found.getCoverImage();
+            } catch (NoResultException _e) {
+                return null;
+            }
+        }
+    }
+
+    @Override
+    public List<Log> getChangeLogs(String isrc, Date from, Date to, String changeType) {
+        try (HibernateSession session = HibernateUtil.startSession()) {
+            Query<Album> query = session.createQuery("from Album as a where a.isrc = :isrc");
+            query.setParameter("isrc", isrc);
+            try {
+                Album found = query.getSingleResult();
+
+                return found.getLogs()
+                    .stream()
+                    .filter(a -> from == null || a.getTimestamp().after(from))
+                    .filter(a -> to == null || a.getTimestamp().before(to))
+                    .filter(a -> changeType == null || a.getChange().equals(changeType))
+                    .sorted()
+                    .collect(Collectors.toList());
+            } catch (NoResultException _e) {
+                return null;
+            }
+
+        }
+    }
+
+    @Override
+    public boolean clearLogs(Album album) {
+        throw new RepException("the method is not yet supported.");
     }
 }

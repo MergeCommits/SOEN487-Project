@@ -1,4 +1,7 @@
 package com.thing.core;
 
-public class RepException extends Throwable {
+public class RepException extends RuntimeException {
+    public RepException(String message) {
+        super(message);
+    }
 }

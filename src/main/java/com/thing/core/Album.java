@@ -74,26 +74,28 @@ public class Album implements Comparable<Album> {
         this.artist = artist;
     }
 
-    @Column(name = "cover_image", columnDefinition="LONGBLOB")
-    private byte[] coverImage;
+    @Column(name = "cover_image")
+    @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(name = "image", column = @Column(name = "cover_image", columnDefinition="LONGBLOB")),
+        @AttributeOverride(name = "mimeType", column = @Column(name = "cover_image_mime"))
+    })
+    private AlbumCoverImage coverImage;
 
-    public byte[] getCoverImage() {
+    public AlbumCoverImage getCoverImage() {
         return coverImage;
     }
 
-    public void setCoverImage(byte[] coverImage) {
+    public void setCoverImage(AlbumCoverImage coverImage) {
         this.coverImage = coverImage;
     }
 
-    @Column(name = "cover_image_mime")
-    private String coverImageMIME;
-
-    public String getCoverImageMIME() {
-        return coverImageMIME;
+    public Set<Log> getLogs() {
+        return logs;
     }
 
-    public void setCoverImageMIME(String coverImageMIME) {
-        this.coverImageMIME = coverImageMIME;
+    public void setLogs(Set<Log> logs) {
+        this.logs = logs;
     }
 
     @OneToMany()
@@ -102,6 +104,14 @@ public class Album implements Comparable<Album> {
 
     @Override
     public int compareTo(Album o) {
-        return getIsrc().compareTo(o.getIsrc());
+        return getTitle().compareTo(o.getTitle());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Album album = (Album) o;
+        return getId() == album.getId() && getIsrc().equals(album.getIsrc());
     }
 }
