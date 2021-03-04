@@ -13,7 +13,6 @@ public class AlbumRepositoryImpl implements AlbumRepository {
         albumCollection = new ArrayList<Album>();
     }
 
-    @Override
     public boolean addAlbum(Album album) {
         Optional<Album> matchingID = albumCollection
                 .stream()
@@ -28,16 +27,6 @@ public class AlbumRepositoryImpl implements AlbumRepository {
         return true;
     }
 
-    @Override
-    public Album getAlbum(String isrc) {
-        return albumCollection
-                .stream()
-                .filter(a -> isrc.equals(a.getIsrc()))
-                .findFirst()
-                .orElse(null);
-    }
-
-    @Override
     public boolean updateAlbum(Album album) {
         int index;
         boolean found = false;
@@ -56,14 +45,15 @@ public class AlbumRepositoryImpl implements AlbumRepository {
         return true;
     }
 
-    @Override
     public boolean removeAlbum(String isrc) {
         return albumCollection.removeIf(a -> a.getIsrc().equals(isrc));
     }
 
-    public String listAlbums() {
-        return albumCollection.stream()
-                .map(Album::toStringIRSCAndTitle)
-                .collect(Collectors.joining("\n"));
+    public Album getAlbum(String isrc) {
+        return albumCollection
+            .stream()
+            .filter(a -> isrc.equals(a.getIsrc()))
+            .findFirst()
+            .orElse(null);
     }
 }

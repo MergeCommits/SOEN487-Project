@@ -1,6 +1,7 @@
 package com.thing.runtime;
 
-import com.thing.core.Employee;
+import com.thing.core.Album;
+import com.thing.core.Artist;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -11,6 +12,7 @@ import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.Configuration;
 
 import java.net.URI;
 import java.net.URL;
@@ -60,10 +62,14 @@ public class Main {
         Session session = factory.openSession();
         Transaction t = session.beginTransaction();
 
-        Employee e1=new Employee();
-        e1.setId(101);
-        e1.setFirstName("Gaurav");
-        e1.setLastName("Chawla");
+        Album e1=new Album();
+        e1.setYear(434);
+        e1.setIsrc("Chawla");
+        e1.setTitle("sd");
+        Artist e23 = new Artist();
+        e23.setFirstName("dssd");
+        e23.setLastName("eed");
+        e1.setArtist(e23);
 
         session.save(e1);
         t.commit();

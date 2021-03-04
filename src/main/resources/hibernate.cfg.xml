@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-configuration PUBLIC
         "-//Hibernate/Hibernate Configuration DTD 5.3//EN"
-        "http://www.hibernate.org/dtd/hibernate-configuration-5.3.dtd">
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
-
-        <property name="hbm2ddl.auto">update</property>
-        <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
-        <property name="connection.url">jdbc:mysql://localhost:3306/br_road</property>
+        <property name="hbm2ddl.auto">validate</property>
+        <property name="dialect">org.hibernate.dialect.MariaDBDialect</property>
+        <property name="connection.url">jdbc:mariadb://localhost:3306/br_road</property>
         <property name="connection.username">root</property>
-<!--        <property name="connection.password"></property>-->
-        <property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+        <property name="connection.driver_class">org.mariadb.jdbc.Driver</property>
 
-        <mapping class="com.thing.core.Employee"/>
+        <mapping class="com.thing.core.Album" />
+        <mapping class="com.thing.core.Log" />
     </session-factory>
 </hibernate-configuration>
