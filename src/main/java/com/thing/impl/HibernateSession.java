@@ -2,9 +2,8 @@ package com.thing.impl;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.query.Query;
-
-import java.util.List;
 
 public class HibernateSession implements AutoCloseable {
     private final Session session;

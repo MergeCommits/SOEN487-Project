@@ -35,10 +35,10 @@ public class AlbumRepositoryImpl implements AlbumRepository {
             }
 
             session.save(album);
-            performLog(Log.TYPE_CREATE, album);
-
-            return true;
         }
+
+        performLog(Log.TYPE_CREATE, album);
+        return true;
     }
 
     @Override
@@ -51,31 +51,39 @@ public class AlbumRepositoryImpl implements AlbumRepository {
                 Album found = query.getSingleResult();
                 album.setId(found.getId());
                 session.save(album);
-                performLog(Log.TYPE_UPDATE, album);
 
-                return true;
             } catch (NoResultException _e) {
                 return false;
             }
         }
+
+        performLog(Log.TYPE_UPDATE, album);
+        return true;
     }
 
     @Override
     public boolean removeAlbum(String isrc) {
+        Album album = null;
         try (HibernateSession session = HibernateUtil.startSession()) {
             Query<Album> query = session.createQuery("from Album as a where a.isrc = :isrc");
             query.setParameter("isrc", isrc);
             try {
-                Album album = query.getSingleResult();
-                performLog(Log.TYPE_DELETE, album);
-                session.delete(album);
-
-                return true;
-            } catch (NoResultException _e) {
-                return false;
+                album = query.getSingleResult();
+            } catch (NoResultException ignored) {
             }
-
         }
+
+        if (album == null) {
+            return false;
+        }
+
+        performLog(Log.TYPE_DELETE, album);
+
+        try (HibernateSession session = HibernateUtil.startSession()) {
+            session.delete(album);
+        }
+
+        return true;
     }
 
     @Override
@@ -102,40 +110,44 @@ public class AlbumRepositoryImpl implements AlbumRepository {
 
     @Override
     public boolean updateAlbumImage(String isrc, AlbumCoverImage albumCoverImage) {
+        Album found = null;
+
         try (HibernateSession session = HibernateUtil.startSession()) {
             Query<Album> query = session.createQuery("from Album as a where a.isrc = :isrc");
             query.setParameter("isrc", isrc);
 
             try {
-                Album found = query.getSingleResult();
+                found = query.getSingleResult();
                 found.setCoverImage(albumCoverImage);
                 session.save(found);
-                performLog(Log.TYPE_UPDATE, found);
-
-                return true;
             } catch (NoResultException _e) {
                 return false;
             }
         }
+
+        performLog(Log.TYPE_UPDATE, found);
+        return true;
     }
 
     @Override
     public boolean removeAlbumImage(String isrc) {
+        Album found = null;
+
         try (HibernateSession session = HibernateUtil.startSession()) {
             Query<Album> query = session.createQuery("from Album as a where a.isrc = :isrc");
             query.setParameter("isrc", isrc);
 
             try {
-                Album found = query.getSingleResult();
+                found = query.getSingleResult();
                 found.setCoverImage(null);
                 session.save(found);
-                performLog(Log.TYPE_UPDATE, found);
-
-                return true;
             } catch (NoResultException _e) {
                 return false;
             }
         }
+
+        performLog(Log.TYPE_UPDATE, found);
+        return true;
     }
 
     @Override

@@ -1,8 +1,11 @@
 package com.thing.core;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.util.Set;
 
+@XmlRootElement
 @Entity
 @Table(name = "album")
 public class Album implements Comparable<Album> {
@@ -90,6 +93,7 @@ public class Album implements Comparable<Album> {
         this.coverImage = coverImage;
     }
 
+    @XmlTransient
     public Set<Log> getLogs() {
         return logs;
     }
@@ -98,9 +102,12 @@ public class Album implements Comparable<Album> {
         this.logs = logs;
     }
 
-    @OneToMany()
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "album_id")
     private Set<Log> logs;
+
+    public Album() {
+    }
 
     @Override
     public int compareTo(Album o) {
@@ -112,6 +119,6 @@ public class Album implements Comparable<Album> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Album album = (Album) o;
-        return getId() == album.getId() && getIsrc().equals(album.getIsrc());
+        return getIsrc().equals(album.getIsrc());
     }
 }

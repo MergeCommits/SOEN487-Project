@@ -22,6 +22,7 @@ public class Log implements Comparable<Log> {
         return id;
     }
 
+    @Column(name = "change_type")
     private String change;
 
     public String getChange() {
