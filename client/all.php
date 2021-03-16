@@ -16,10 +16,27 @@ curl_setopt_array($curl, array(
 $response = curl_exec($curl);
 $jsonArray = json_decode($response);
 
+if (isset($_GET['name'])) {
+    $search = trim($_GET['name']);
+    if ($search !== '') {
+        foreach ($jsonArray as $key => $album) {
+            if (strpos($album->title, $search) === false) {
+                unset($jsonArray[$key]);
+            }
+        }
+    }
+}
+
 curl_close($curl);
 echo $response;
 
 ?>
+
+<form action="all.php" method="get">
+    <label for="name">Album name:</label>
+    <input type="text" id="name" name="name"><br><br>
+    <input type="submit" value="Submit">
+</form>
 
 <table style="border: 1px solid black;">
     <thead>
@@ -33,8 +50,8 @@ echo $response;
     <tbody>
     <?php foreach($jsonArray as $album): ?>
         <tr>
-            <?php $titleHTML = htmlspecialchars($album->title); ?>
-            <td style="border: 1px solid black;"><a href="view.php?title=<?= $titleHTML ?>"><?= $album->title; ?></a></td></td>
+            <?php $isrcHTML = htmlspecialchars($album->isrc); ?>
+            <td style="border: 1px solid black;"><a href="view.php?isrc=<?= $isrcHTML ?>"><?= $album->title; ?></a></td>
             <td style="border: 1px solid black;"><?= $album->artist->firstName . ' ' . $album->artist->lastName; ?></td>
             <td style="border: 1px solid black;"><?= $album->isrc; ?></td>
             <td style="border: 1px solid black;"><?= $album->year; ?></td>
