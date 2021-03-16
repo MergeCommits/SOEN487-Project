@@ -3,6 +3,7 @@ package com.thing.rest;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
+import java.util.Arrays;
 
 @Provider
 public class UncaughtException extends Throwable implements ExceptionMapper<Throwable> {
@@ -10,6 +11,6 @@ public class UncaughtException extends Throwable implements ExceptionMapper<Thro
 
     @Override
     public Response toResponse(Throwable exception) {
-        return Response.status(500).entity(exception.getMessage()).type("text/plain").build();
+        return Response.status(500).entity(Arrays.toString(exception.getStackTrace())).type("text/plain").build();
     }
 }

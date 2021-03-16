@@ -1,6 +1,7 @@
 package com.thing.rest;
 
 import com.thing.core.Album;
+import com.thing.core.AlbumCoverImage;
 import com.thing.core.AlbumRepository;
 import com.thing.core.Artist;
 import com.thing.impl.AlbumRepositoryImpl;
@@ -9,11 +10,13 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 @Path("album")
 public class AlbumService {
@@ -23,7 +26,8 @@ public class AlbumService {
     @Path("all")
     @Produces(MediaType.APPLICATION_JSON)
     public Response listAlbums() {
-        return Response.ok(albumRepository.allAlbums()).build();
+        GenericEntity<List<Album>> list = new GenericEntity<List<Album>>(albumRepository.allAlbums()) {};
+        return Response.ok(list).build();
     }
 
     @GET
@@ -109,7 +113,7 @@ public class AlbumService {
     }
 
     @POST
-    @Path("/cover/{isrc}")
+    @Path("/cover/update/{isrc}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.TEXT_PLAIN)
     public Response updateCoverImage(@PathParam("isrc") String isrc,
@@ -126,6 +130,29 @@ public class AlbumService {
         buffer.flush();
         byte[] byteArray = buffer.toByteArray();
 
-        return Response.ok(body.getMediaType().toString()).build();
+        AlbumCoverImage albumCoverImage = new AlbumCoverImage();
+        albumCoverImage.setImage(byteArray);
+        albumCoverImage.setMimeType(body.getMediaType().toString());
+
+        albumRepository.updateAlbumImage(isrc, albumCoverImage);
+        return Response.ok("Cover added.").build();
+    }
+
+    @GET
+    @Path("/cover/get/{isrc}")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response getCoverImage(@PathParam("isrc") String isrc) {
+        AlbumCoverImage albumCoverImage = albumRepository.getAlbumImage(isrc);
+        return Response.ok(albumCoverImage).build();
+    }
+
+    @DELETE
+    @Path("/cover/delete/{isrc}")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response deleteCoverImage(@PathParam("isrc") String isrc) {
+        albumRepository.removeAlbumImage(isrc);
+        return Response.ok("Album cover deleted.").build();
     }
 }

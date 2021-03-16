@@ -1,8 +1,11 @@
 package com.thing.core;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.util.Date;
 
+@XmlRootElement
 @Entity
 @Table(name = "log")
 public class Log implements Comparable<Log> {
@@ -41,6 +44,7 @@ public class Log implements Comparable<Log> {
         this.timestamp = timestamp;
     }
 
+    @XmlTransient
     public Album getAlbum() {
         return album;
     }

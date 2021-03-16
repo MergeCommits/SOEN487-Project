@@ -1,7 +1,9 @@
 package com.thing.core;
 
 import javax.persistence.Embeddable;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement
 @Embeddable
 public class AlbumCoverImage {
     private byte[] image;
