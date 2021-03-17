@@ -16,6 +16,18 @@ public class HibernateSession implements AutoCloseable {
         session.save(o);
     }
 
+    public void saveOrUpdate(Object o) {
+        session.saveOrUpdate(o);
+    }
+
+    public void clear() {
+        session.clear();
+    }
+
+    public Transaction beginTransaction() {
+        return session.beginTransaction();
+    }
+
     public void delete(Object o) {
         session.delete(o);
     }

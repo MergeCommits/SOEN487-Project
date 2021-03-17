@@ -22,6 +22,11 @@ if (isset($album->coverImage)) {
     $artwork_src = 'data:' . $album->coverImage->mimeType . ';base64,' . $album->coverImage->image;
 }
 
+if (!isset($album->description)) {
+    $album->description = '';
+}
+
+
 curl_close($curl);
 echo $response;
 
@@ -45,11 +50,15 @@ echo $response;
             <th>Release Year</th>
             <td style="border: 1px solid black;"><?= $album->year; ?></td>
         </tr>
-    <?php if(isset($artwork_src)) : ?>
+        <tr>
+            <th>Description</th>
+            <td style="border: 1px solid black;"><?= $album->description; ?></td>
+        </tr>
+        <?php if(isset($artwork_src)) : ?>
         <tr>
             <th>Artwork</th>
             <td style="border: 1px solid black;"><img src="<?= $artwork_src; ?>"></td>
         </tr>
-    <?php endif; ?>
+        <?php endif; ?>
     </tbody>
 </table>

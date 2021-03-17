@@ -1,6 +1,7 @@
 package com.thing.impl;
 
 import com.thing.core.*;
+import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import javax.persistence.NoResultException;
@@ -50,7 +51,13 @@ public class AlbumRepositoryImpl implements AlbumRepository {
             try {
                 Album found = query.getSingleResult();
                 album.setId(found.getId());
-                session.save(album);
+                album.setCoverImage(found.getCoverImage());
+
+                Transaction tx = session.beginTransaction();
+
+                session.clear();
+                session.saveOrUpdate(album);
+                tx.commit();
 
             } catch (NoResultException _e) {
                 return false;
@@ -110,7 +117,7 @@ public class AlbumRepositoryImpl implements AlbumRepository {
 
     @Override
     public boolean updateAlbumImage(String isrc, AlbumCoverImage albumCoverImage) {
-        Album found = null;
+        Album found;
 
         try (HibernateSession session = HibernateUtil.startSession()) {
             Query<Album> query = session.createQuery("from Album as a where a.isrc = :isrc");
@@ -119,7 +126,10 @@ public class AlbumRepositoryImpl implements AlbumRepository {
             try {
                 found = query.getSingleResult();
                 found.setCoverImage(albumCoverImage);
+
+                Transaction tx = session.beginTransaction();
                 session.save(found);
+                tx.commit();
             } catch (NoResultException _e) {
                 return false;
             }
@@ -131,7 +141,7 @@ public class AlbumRepositoryImpl implements AlbumRepository {
 
     @Override
     public boolean removeAlbumImage(String isrc) {
-        Album found = null;
+        Album found;
 
         try (HibernateSession session = HibernateUtil.startSession()) {
             Query<Album> query = session.createQuery("from Album as a where a.isrc = :isrc");
@@ -140,7 +150,10 @@ public class AlbumRepositoryImpl implements AlbumRepository {
             try {
                 found = query.getSingleResult();
                 found.setCoverImage(null);
+
+                Transaction tx = session.beginTransaction();
                 session.save(found);
+                tx.commit();
             } catch (NoResultException _e) {
                 return false;
             }
