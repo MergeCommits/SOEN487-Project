@@ -37,11 +37,11 @@ try {
 
     <label for="from">From:</label>
     <input type="datetime-local" id="from" name="from"
-           value="$change>" /><br><br>
+           value="<?= $from !== null ? $from : '' ?>" /><br><br>
 
     <label for="to">To:</label>
     <input type="datetime-local" id="to" name="to"
-           value="<?= isset($to) ? $to : '' ?>" /><br><br>
+           value="<?= $to !== null ? $to : '' ?>" /><br><br>
 
     <input type="submit" value="Submit">
 </form>
