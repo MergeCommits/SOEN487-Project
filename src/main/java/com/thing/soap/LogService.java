@@ -13,7 +13,7 @@ import java.util.List;
 @SOAPBinding
 public interface LogService {
     @WebMethod
-    List<Log> getChangeLog(String isrc, Date from, Date to, String changeType);
+    List<Log> getChangeLog(String isrc, String from, String to, String changeType);
     @WebMethod
     boolean clearLogs(Album album) throws MySOAPFault;
 }

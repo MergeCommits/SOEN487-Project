@@ -8,6 +8,8 @@ import javax.persistence.NoResultException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.hibernate.annotations.common.util.StringHelper.isEmpty;
+
 public class AlbumRepositoryImpl implements AlbumRepository {
     private void performLog(String logType, Album album) {
         try (HibernateSession session = HibernateUtil.startSession()) {
@@ -190,14 +192,16 @@ public class AlbumRepositoryImpl implements AlbumRepository {
             try {
                 Album found = query.getSingleResult();
 
-                return found.getLogs()
+                List<Log> uh =  found.getLogs()
                     .stream()
                     .filter(a -> from == null || a.getTimestamp().after(from))
                     .filter(a -> to == null || a.getTimestamp().before(to))
-                    .filter(a -> changeType == null || a.getChange().equals(changeType))
+                    .filter(a -> changeType == null || isEmpty(changeType) || a.getChange().equals(changeType))
                     .sorted()
                     .collect(Collectors.toList());
-            } catch (NoResultException _e) {
+                return uh;
+            } catch (NoResultException e) {
+                System.err.print(e.getCause().toString());
                 return null;
             }
 

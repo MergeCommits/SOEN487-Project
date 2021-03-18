@@ -34,35 +34,38 @@ echo $response;
 
 <table style="border: 1px solid black;">
     <tbody>
-        <tr>
-            <td><a href="edit.php?isrc=<?= $album->isrc; ?>">Edit</a></td>
-            <td><a href="delete.php?isrc=<?= $album->isrc; ?>">Delete</a></td>
-        </tr>
-        <tr>
-            <th>Title</th>
-            <td style="border: 1px solid black;"><?= $album->title; ?></td>
-        </tr>
-        <tr>
-            <th>Artist</th>
-            <td style="border: 1px solid black;"><?= $album->artist->firstName . ' ' . $album->artist->lastName; ?></td>
-        </tr>
-        <tr>
-            <th>ISRC</th>
-            <td style="border: 1px solid black;"><?= $album->isrc; ?></td>
-        </tr>
-        <tr>
-            <th>Release Year</th>
-            <td style="border: 1px solid black;"><?= $album->year; ?></td>
-        </tr>
-        <tr>
-            <th>Description</th>
-            <td style="border: 1px solid black;"><?= $album->description; ?></td>
-        </tr>
-        <?php if(isset($artwork_src)) : ?>
-        <tr>
-            <th>Artwork</th>
-            <td style="border: 1px solid black;"><img src="<?= $artwork_src; ?>"></td>
-        </tr>
-        <?php endif; ?>
+    <tr>
+        <td><a href="edit.php?isrc=<?= $album->isrc; ?>">Edit</a></td>
+        <td><a href="delete.php?isrc=<?= $album->isrc; ?>">Delete</a></td>
+    </tr>
+    <tr>
+        <td colspan="2"><a href="logs.php?isrc=<?= $album->isrc; ?>">View all logs</a></td>
+    </tr>
+    <tr>
+        <th>Title</th>
+        <td style="border: 1px solid black;"><?= $album->title; ?></td>
+    </tr>
+    <tr>
+        <th>Artist</th>
+        <td style="border: 1px solid black;"><?= $album->artist->firstName . ' ' . $album->artist->lastName; ?></td>
+    </tr>
+    <tr>
+        <th>ISRC</th>
+        <td style="border: 1px solid black;"><?= $album->isrc; ?></td>
+    </tr>
+    <tr>
+        <th>Release Year</th>
+        <td style="border: 1px solid black;"><?= $album->year; ?></td>
+    </tr>
+    <tr>
+        <th>Description</th>
+        <td style="border: 1px solid black;"><?= $album->description; ?></td>
+    </tr>
+    <?php if(isset($artwork_src)) : ?>
+    <tr>
+        <th>Artwork</th>
+        <td style="border: 1px solid black;"><img src="<?= $artwork_src; ?>" alt="Artwork"></td>
+    </tr>
+    <?php endif; ?>
     </tbody>
 </table>

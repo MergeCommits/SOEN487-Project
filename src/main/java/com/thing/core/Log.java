@@ -3,6 +3,7 @@ package com.thing.core;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Date;
 
 @XmlRootElement
@@ -36,6 +37,7 @@ public class Log implements Comparable<Log> {
         this.change = change;
     }
 
+    @XmlJavaTypeAdapter(DateAdapter.class)
     public Date getTimestamp() {
         return timestamp;
     }
