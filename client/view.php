@@ -35,6 +35,10 @@ echo $response;
 <table style="border: 1px solid black;">
     <tbody>
         <tr>
+            <td><a href="edit.php?isrc=<?= $album->isrc; ?>">Edit</a></td>
+            <td><a href="delete.php?isrc=<?= $album->isrc; ?>">Delete</a></td>
+        </tr>
+        <tr>
             <th>Title</th>
             <td style="border: 1px solid black;"><?= $album->title; ?></td>
         </tr>

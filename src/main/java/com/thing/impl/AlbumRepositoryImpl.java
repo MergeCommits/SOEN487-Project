@@ -87,7 +87,11 @@ public class AlbumRepositoryImpl implements AlbumRepository {
         performLog(Log.TYPE_DELETE, album);
 
         try (HibernateSession session = HibernateUtil.startSession()) {
+            Transaction tx = session.beginTransaction();
+
             session.delete(album);
+
+            tx.commit();
         }
 
         return true;
