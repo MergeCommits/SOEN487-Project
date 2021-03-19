@@ -134,8 +134,12 @@ public class AlbumService {
         albumCoverImage.setImage(byteArray);
         albumCoverImage.setMimeType(body.getMediaType().toString());
 
-        albumRepository.updateAlbumImage(isrc, albumCoverImage);
-        return Response.ok("Cover added.").build();
+        boolean success = albumRepository.updateAlbumImage(isrc, albumCoverImage);
+        if (success) {
+            return Response.ok("Cover added.").build();
+        } else {
+            return Response.status(400).entity("Cover addition failed.").build();
+        }
     }
 
     @GET
@@ -152,7 +156,11 @@ public class AlbumService {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.TEXT_PLAIN)
     public Response deleteCoverImage(@PathParam("isrc") String isrc) {
-        albumRepository.removeAlbumImage(isrc);
-        return Response.ok("Album cover deleted.").build();
+        boolean success = albumRepository.removeAlbumImage(isrc);
+        if (success) {
+            return Response.ok("Album cover deleted.").build();
+        } else {
+            return Response.status(400).entity("Cover deletion failed.").build();
+        }
     }
 }
