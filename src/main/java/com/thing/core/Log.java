@@ -78,6 +78,6 @@ public class Log implements Comparable<Log> {
 
     @Override
     public int compareTo(Log o) {
-        return getTimestamp().compareTo(o.getTimestamp());
+        return o.getTimestamp().compareTo(getTimestamp());
     }
 }

@@ -15,5 +15,5 @@ public interface LogService {
     @WebMethod
     List<Log> getChangeLog(String isrc, String from, String to, String changeType);
     @WebMethod
-    boolean clearLogs(Album album) throws MySOAPFault;
+    boolean clearLogs(String isrc) throws MySOAPFault;
 }

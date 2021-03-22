@@ -19,8 +19,8 @@ public class LogServiceImpl implements LogService {
     }
 
     @Override
-    public boolean clearLogs(Album album) throws MySOAPFault {
+    public boolean clearLogs(String isrc) throws MySOAPFault {
         RepException exception = new RepException("Not implemented");
-        throw new MySOAPFault("There is an error", exception);
+        throw new MySOAPFault("This function is not implemented", exception);
     }
 }

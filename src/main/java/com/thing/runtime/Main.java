@@ -13,17 +13,12 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Scanner;
 
-/**
- * Main class.
- *
- */
 public class Main {
     // Base URI the Grizzly HTTP server will listen on
     public static final String BASE_URI = "http://localhost:8080/myapp/";
 
-    static int port = 8090;
-    static String servicePath = "/logs";
-    static String BASE_URI_SOAP = "http://localhost:" + port + servicePath;
+    private static final int SOAP_PORT = 8090;
+    private static final String SOAP_SERVICE_PATH = "/logs";
 
     private static HttpServer restServer;
     private static HttpServer soapServer;
@@ -45,14 +40,15 @@ public class Main {
 
 
 
-        NetworkListener networkListener = new NetworkListener("jaxws-listener", "0.0.0.0", port);
+        NetworkListener networkListener = new NetworkListener("jaxws-listener", "0.0.0.0", SOAP_PORT);
         HttpHandler httpHandler = new JaxwsHandler(new LogServiceImpl());
 
         soapServer = new HttpServer();
-        soapServer.getServerConfiguration().addHttpHandler(httpHandler, servicePath);
+        soapServer.getServerConfiguration().addHttpHandler(httpHandler, SOAP_SERVICE_PATH);
         soapServer.addListener(networkListener);
         soapServer.start();
 
+        String BASE_URI_SOAP = "http://localhost:" + SOAP_PORT + SOAP_SERVICE_PATH;
         System.out.println("SOAP Service listening on " + BASE_URI_SOAP + "?wsdl");
     }
 
@@ -69,33 +65,5 @@ public class Main {
 
         stopServer();
     }
-
-//    public static void main(String[] args) {
-////        URL url = Thread.currentThread().getContextClassLoader()
-////            .getResource("javax/persistence/Table.class");
-////        System.out.println(url);
-//        StandardServiceRegistry ssr = new StandardServiceRegistryBuilder().configure("hibernate.cfg.xml").build();
-//        Metadata meta = new MetadataSources(ssr).getMetadataBuilder().build();
-//
-//        SessionFactory factory = meta.getSessionFactoryBuilder().build();
-//        Session session = factory.openSession();
-//        Transaction t = session.beginTransaction();
-//
-//        Album e1=new Album();
-//        e1.setYear(434);
-//        e1.setIsrc("Chawla");
-//        e1.setTitle("sd");
-//        Artist e23 = new Artist();
-//        e23.setFirstName("dssd");
-//        e23.setLastName("eed");
-//        e1.setArtist(e23);
-//
-//        session.save(e1);
-//        t.commit();
-//        System.out.println("successfully saved");
-//        factory.close();
-//        session.close();
-//
-//    }
 }
 

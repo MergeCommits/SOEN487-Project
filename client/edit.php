@@ -1,5 +1,10 @@
 <?php
 
+if (!isset($_GET['isrc'])) {
+    echo('No ISRC specified.');
+    die();
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $curl = curl_init();
     $title = htmlspecialchars($_POST['name']);
@@ -94,12 +99,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $response = curl_exec($curl);
     $album = json_decode($response);
 
+    if ($album === null) {
+        die($response);
+    }
+
     if (!isset($album->description)) {
         $album->description = '';
     }
 
     curl_close($curl);
-    echo $response;
+//    echo $response;
 }
 
 ?>

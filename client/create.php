@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $response = curl_exec($curl);
 
     curl_close($curl);
-    echo $response;
+//    echo $response;
 
     function isJson($string): bool {
         json_decode($string);
@@ -38,6 +38,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isJson($response)) {
         header("Location: http://localhost/client/view.php?isrc=$isrc");
         die();
+    } else {
+        die($response);
     }
 }
 

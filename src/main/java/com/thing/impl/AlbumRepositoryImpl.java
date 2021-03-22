@@ -37,7 +37,9 @@ public class AlbumRepositoryImpl implements AlbumRepository {
                 return false;
             }
 
-            session.save(album);
+            Transaction tx = session.beginTransaction();
+            int id = session.save(album);
+            tx.commit();
         }
 
         performLog(Log.TYPE_CREATE, album);
@@ -90,9 +92,7 @@ public class AlbumRepositoryImpl implements AlbumRepository {
 
         try (HibernateSession session = HibernateUtil.startSession()) {
             Transaction tx = session.beginTransaction();
-
             session.delete(album);
-
             tx.commit();
         }
 
@@ -192,14 +192,13 @@ public class AlbumRepositoryImpl implements AlbumRepository {
             try {
                 Album found = query.getSingleResult();
 
-                List<Log> uh =  found.getLogs()
+                return found.getLogs()
                     .stream()
                     .filter(a -> from == null || a.getTimestamp().after(from))
                     .filter(a -> to == null || a.getTimestamp().before(to))
                     .filter(a -> changeType == null || isEmpty(changeType) || a.getChange().equals(changeType))
                     .sorted()
                     .collect(Collectors.toList());
-                return uh;
             } catch (NoResultException e) {
                 System.err.print(e.getCause().toString());
                 return null;

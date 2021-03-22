@@ -102,8 +102,7 @@ public class Album implements Comparable<Album> {
         this.logs = logs;
     }
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "album_id")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "album")
     private Set<Log> logs;
 
     public Album() {

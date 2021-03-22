@@ -28,15 +28,17 @@ if (isset($_GET['name'])) {
 }
 
 curl_close($curl);
-echo $response;
+//echo $response;
 
 ?>
 
 <form action="all.php" method="get">
     <label for="name">Album name:</label>
     <input type="text" id="name" name="name"><br><br>
-    <input type="submit" value="Submit">
+    <input type="submit" value="Seach">
 </form>
+
+<h4><a href="create.php">Add album</a></h4>
 
 <table style="border: 1px solid black;">
     <thead>

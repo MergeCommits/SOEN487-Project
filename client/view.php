@@ -1,5 +1,10 @@
 <?php
 
+if (!isset($_GET['isrc'])) {
+    echo('No ISRC specified.');
+    die();
+}
+
 $albumISRC = $_GET['isrc'];
 
 $curl = curl_init();
@@ -18,6 +23,10 @@ curl_setopt_array($curl, array(
 $response = curl_exec($curl);
 $album = json_decode($response);
 
+if ($album === null) {
+    die($response);
+}
+
 if (isset($album->coverImage)) {
     $artwork_src = 'data:' . $album->coverImage->mimeType . ';base64,' . $album->coverImage->image;
 }
@@ -28,7 +37,7 @@ if (!isset($album->description)) {
 
 
 curl_close($curl);
-echo $response;
+//echo $response;
 
 ?>
 

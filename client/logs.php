@@ -4,8 +4,6 @@ $isrc = $_GET['isrc'];
 try {
     $url = "http://localhost:8090/logs?wsdl";
     $client = new SoapClient($url, ['features' => SOAP_SINGLE_ELEMENT_ARRAYS]);
-//    $from = '2021-03-04T19:06';
-//    $to = '2021-03-17T15:03';
     $from = isset($_GET['from']) ? $_GET['from'] : null;
     $to = isset($_GET['to']) ? $_GET['to'] : null;
     $change = isset($_GET['change']) ? $_GET['change'] : null;
@@ -45,6 +43,8 @@ try {
 
     <input type="submit" value="Submit">
 </form>
+
+<h4><a href="clear.php?isrc=<?= $isrc ?>">Clear logs</a></h4>
 
 <table style="border: 1px solid black;">
     <thead>
