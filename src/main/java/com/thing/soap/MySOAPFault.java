@@ -2,9 +2,9 @@ package com.thing.soap;
 
 import javax.xml.ws.WebFault;
 
-@WebFault(name="MySOAPFault", targetNamespace="http://www.example.com")
+@WebFault(name="MySOAPFault", targetNamespace="com.thing.soap.LogService")
 public class MySOAPFault extends Exception {
-    public MySOAPFault(String message, Throwable cause) {
-        super(message, cause);
+    public MySOAPFault(String message) {
+        super(message);
     }
 }

@@ -1,26 +1,29 @@
 package com.thing.soap;
 
-import com.thing.core.Album;
-import com.thing.core.AlbumRepository;
-import com.thing.core.Log;
-import com.thing.core.RepException;
-import com.thing.impl.AlbumRepositoryImpl;
-
 import javax.jws.WebService;
-import java.util.List;
 
 @WebService(endpointInterface = "com.thing.soap.LogService")
 public class LogServiceImpl implements LogService {
-    private static final AlbumRepository albumRepository = new AlbumRepositoryImpl();
 
     @Override
-    public List<Log> getChangeLog(String isrc, String from, String to, String changeType) {
-        return albumRepository.getChangeLogs(isrc, new DateParam(from).getDate(), new DateParam(to).getDate(), changeType);
+    public String binaryToHex(byte[] data) throws MySOAPFault {
+        String converted = HexConverter.toHex(data);
+
+        if (converted.length() < 1) {
+            throw new MySOAPFault("Invalid binary data provided.");
+        }
+
+        return HexConverter.toHex(data);
     }
 
     @Override
-    public boolean clearLogs(String isrc) throws MySOAPFault {
-        RepException exception = new RepException("Not implemented");
-        throw new MySOAPFault("This function is not implemented", exception);
+    public byte[] hexToBinary(String data) throws MySOAPFault {
+        byte[] converted = HexConverter.fromHex(data);
+
+        if (converted == null) {
+            throw new MySOAPFault("Invalid hex provided.");
+        }
+
+        return converted;
     }
 }
