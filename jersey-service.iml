@@ -15,7 +15,7 @@
         <setting name="validation-enabled" value="true" />
         <setting name="provider-name" value="Hibernate" />
         <datasource-mapping>
-          <factory-entry name="jersey-service" value="7850f140-2d65-4322-b617-2331206f831a" />
+          <factory-entry name="jersey-service" value="812a3f6b-7876-4ef6-8ab5-98a481818574" />
         </datasource-mapping>
         <naming-strategy-map />
       </configuration>
