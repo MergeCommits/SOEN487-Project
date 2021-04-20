@@ -44,10 +44,10 @@ public class HotelService {
         return Response.ok(newHotel).build();
     }
 
-    @DELETE
-    @Path("delete/{name}")
+    @POST
+    @Path("delete")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteAlbum(@PathParam("name") String name) {
+    public Response deleteHotel(@FormParam("name") String name) {
         boolean deletedSuccessfully = hotelRepository.removeHotel(name);
         if (!deletedSuccessfully) {
             return Response.status(400).entity("Hotel with that name does not exist.").build();
