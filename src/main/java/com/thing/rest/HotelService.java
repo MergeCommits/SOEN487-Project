@@ -3,18 +3,10 @@ package com.thing.rest;
 import com.thing.core.Hotel;
 import com.thing.core.HotelRepository;
 import com.thing.impl.HotelRepositoryImpl;
-import org.glassfish.jersey.media.multipart.FormDataBodyPart;
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
-import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
 
 @Path("hotel")
 public class HotelService {
@@ -44,7 +36,7 @@ public class HotelService {
     @Path("insert")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response insertHotel(@FormParam("isrc") String name) {
+    public Response insertHotel(@FormParam("name") String name) {
         Hotel newHotel = new Hotel();
         newHotel.setName(name);
 

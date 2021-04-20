@@ -10,7 +10,7 @@
         <property name="connection.username">root</property>
         <property name="connection.driver_class">org.mariadb.jdbc.Driver</property>
 
-        <mapping class="com.thing.core.Album" />
-        <mapping class="com.thing.core.Log" />
+        <mapping class="com.thing.core.Hotel" />
+        <mapping class="com.thing.core.Room" />
     </session-factory>
 </hibernate-configuration>

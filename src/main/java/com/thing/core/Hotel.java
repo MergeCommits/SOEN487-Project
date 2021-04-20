@@ -31,7 +31,7 @@ public class Hotel {
 
     private String name;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "room")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "hotel")
     private Set<Room> rooms;
 
     @Override
