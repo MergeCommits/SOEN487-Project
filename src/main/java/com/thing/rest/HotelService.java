@@ -21,9 +21,9 @@ public class HotelService {
 //    }
 
     @GET
-    @Path("get/{name}")
+    @Path("get")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getHotel(@PathParam("name") String name) {
+    public Response getHotel(@QueryParam("name") String name) {
         Hotel result = hotelRepository.getHotel(name);
         if (result == null) {
             return Response.status(404).entity("Hotel not found.").build();

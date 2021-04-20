@@ -63,7 +63,7 @@ public class HotelRepositoryImpl implements HotelRepository {
     @Override
     public Hotel getHotel(String name) {
         try (HibernateSession session = HibernateUtil.startSession()) {
-            Query<Hotel> query = session.createQuery("from Album as a where a.name = :name");
+            Query<Hotel> query = session.createQuery("from Hotel as a where a.name = :name");
             query.setParameter("name", name);
             try {
                 return query.getSingleResult();
