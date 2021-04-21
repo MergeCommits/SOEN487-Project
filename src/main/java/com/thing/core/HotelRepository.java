@@ -8,4 +8,6 @@ public interface HotelRepository {
     boolean addOrReplaceRoom(Room room, String hotelName);
     boolean removeRoom(int roomNumber);
     Room getRoom(int roomNumber);
+
+    String getQRCodeURL(Hotel hotel);
 }

@@ -8,6 +8,7 @@ Create the properties file.
 - Under `src/main/resources`, copy `config.properties.dist` to `config.properties`.
 - Supply a `username` and `password` to the config. This will be passed using Basic Auth with every request to the web service.
 - Supply a Sendgrid API key.
+- Supply an email to be listed as the origin. Note that this must be an email that is approved in your Sendgrid account.
 
 # External frameworks
 

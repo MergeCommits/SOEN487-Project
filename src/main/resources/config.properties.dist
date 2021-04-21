@@ -1,3 +1,4 @@
 username=
 password=
-sendgrid_api=
+sendgrid_api_key=
+from_email=

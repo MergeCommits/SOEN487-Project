@@ -1,24 +1,24 @@
 package com.thing.rest;
 
+import com.sendgrid.Method;
+import com.sendgrid.Request;
+import com.sendgrid.SendGrid;
+import com.sendgrid.helpers.mail.Mail;
+import com.sendgrid.helpers.mail.objects.Content;
+import com.sendgrid.helpers.mail.objects.Email;
 import com.thing.core.Hotel;
 import com.thing.core.HotelRepository;
 import com.thing.impl.HotelRepositoryImpl;
+import com.thing.runtime.Main;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
 
 @Path("hotel")
 public class HotelService {
     private static final HotelRepository hotelRepository = new HotelRepositoryImpl();
-
-//    @GET
-//    @Path("all")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public Response listAlbums() {
-//        GenericEntity<List<Album>> list = new GenericEntity<List<Album>>(albumRepository.allAlbums()) {};
-//        return Response.ok(list).build();
-//    }
 
     @GET
     @Path("pretty-get")
@@ -67,5 +67,39 @@ public class HotelService {
         }
 
         return Response.ok("Hotel deleted.").build();
+    }
+
+    @POST
+    @Path("email")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteHotel(@FormParam("hotel") String name, @FormParam("email") String emailAddress) {
+        Hotel hotel = hotelRepository.getHotel(name);
+        if (hotel == null) {
+            return Response.status(400).entity("Hotel with that name does not exist.").build();
+        }
+
+        Email from = new Email(Main.configProperties.getProperty("from_email"));
+        String subject = "Check out this hotel: " + hotel.getName();
+        Email to = new Email(emailAddress);
+
+        HTMLBuilder htmlBuilder = new HTMLBuilder();
+        Content content = new Content("text/html", htmlBuilder.getHotelAsHTML(hotel));
+        Mail mail = new Mail(from, subject, to, content);
+
+        SendGrid sg = new SendGrid(Main.configProperties.getProperty("sendgrid_api_key"));
+        Request request = new Request();
+        try {
+            request.setMethod(Method.POST);
+            request.setEndpoint("mail/send");
+            request.setBody(mail.build());
+            com.sendgrid.Response response = sg.api(request);
+            System.out.println(response.getStatusCode());
+            System.out.println(response.getBody());
+            System.out.println(response.getHeaders());
+        } catch (IOException ignored) {
+
+        }
+
+        return Response.ok("Email sent.").build();
     }
 }

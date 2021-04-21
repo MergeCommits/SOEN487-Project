@@ -2,6 +2,7 @@ package com.thing.rest;
 
 import com.thing.core.Hotel;
 import com.thing.core.Room;
+import com.thing.impl.HotelRepositoryImpl;
 import com.thing.runtime.Main;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class HTMLBuilder {
         }
 
         template = template.replaceFirst("ROOM_FILL", rooms.toString());
+        template = template.replaceFirst("QR_CODE", new HotelRepositoryImpl().getQRCodeURL(hotel));
         return template;
     }
     public String buildRoom(Room room) {

@@ -1,10 +1,14 @@
 package com.thing.impl;
 
 import com.thing.core.*;
+import com.thing.runtime.Main;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import javax.persistence.NoResultException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class HotelRepositoryImpl implements HotelRepository {
@@ -149,13 +153,19 @@ public class HotelRepositoryImpl implements HotelRepository {
         }
     }
 
-//    @Override
-//    public List<Album> allAlbums() {
-//        try (HibernateSession session = HibernateUtil.startSession()) {
-//            Query<Album> query = session.createQuery("from Album");
-//            return query.list().stream().sorted().collect(Collectors.toList());
-//        }
-//    }
+    private final String QR_CODE_API = "http://api.qrserver.com/v1/create-qr-code/";
+    private final String QR_CODE_SIZE = "300";
 
+    @Override
+    public String getQRCodeURL(Hotel hotel) {
+        try {
+            String data = Main.BASE_URI + "hotel/pretty-get/" + hotel.getName();
+            data = URLEncoder.encode(data, StandardCharsets.UTF_8.toString());
 
+            String size = QR_CODE_SIZE + "x" + QR_CODE_SIZE;
+            return QR_CODE_API + "?data=" + data + "&size=" + size;
+        } catch (UnsupportedEncodingException ignored) {
+            return null;
+        }
+    }
 }

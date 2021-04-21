@@ -11,6 +11,6 @@ public class UncaughtException extends Throwable implements ExceptionMapper<Thro
 
     @Override
     public Response toResponse(Throwable exception) {
-        return Response.status(500).entity(Arrays.toString(exception.getStackTrace())).type("text/plain").build();
+        return Response.status(500).entity(exception.getMessage()).type("text/plain").build();
     }
 }
