@@ -5,7 +5,9 @@ import com.thing.runtime.Main;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.PreMatching;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.util.Base64;
@@ -14,8 +16,16 @@ import java.util.Base64;
 @Provider
 public class IncomingRequestFilter implements ContainerRequestFilter {
 
+    @Context
+    private UriInfo info;
+
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
+        String check = info.getPath();
+        if (check.endsWith("pretty-get")) {
+            return;
+        }
+
         String auth = requestContext.getHeaderString("Authorization");
 
         if (auth == null || auth.isEmpty()) {

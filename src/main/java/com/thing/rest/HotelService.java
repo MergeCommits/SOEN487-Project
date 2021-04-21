@@ -21,6 +21,19 @@ public class HotelService {
 //    }
 
     @GET
+    @Path("pretty-get")
+    @Produces(MediaType.TEXT_HTML)
+    public Response getHTMLHotel(@QueryParam("name") String name) {
+        Hotel result = hotelRepository.getHotel(name);
+        if (result == null) {
+            return Response.status(404).entity("Hotel not found.").build();
+        }
+
+        HTMLBuilder htmlBuilder = new HTMLBuilder();
+        return Response.ok(htmlBuilder.getHotelAsHTML(result)).build();
+    }
+
+    @GET
     @Path("get")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getHotel(@QueryParam("name") String name) {

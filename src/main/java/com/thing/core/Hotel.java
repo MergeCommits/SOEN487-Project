@@ -34,6 +34,14 @@ public class Hotel {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "hotel")
     private Set<Room> rooms;
 
+    public Set<Room> getRooms() {
+        return rooms;
+    }
+
+    public void setRooms(Set<Room> rooms) {
+        this.rooms = rooms;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

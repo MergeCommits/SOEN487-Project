@@ -1,14 +1,15 @@
 package com.thing.runtime;
 
+import org.apache.commons.io.IOUtils;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -17,6 +18,8 @@ public class Main {
     public static final String BASE_URI = "http://localhost:8080/myapp/";
 
     public static Properties configProperties;
+
+    public static String htmlTemplate;
 
     private static HttpServer restServer;
 
@@ -47,6 +50,9 @@ public class Main {
 
         InputStream config = classLoader.getResourceAsStream("config.properties");
         configProperties.load(config);
+
+        InputStream template = Main.class.getResourceAsStream("/view/hotel_template.html");
+        htmlTemplate = IOUtils.toString(template, StandardCharsets.UTF_8.name());
 
         startServer();
 

@@ -9,13 +9,14 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+@Path("room")
 public class RoomService {
     private static final HotelRepository hotelRepository = new HotelRepositoryImpl();
 
     @GET
-    @Path("get/{room}")
+    @Path("get")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getRoom(@PathParam("room") int roomNumber) {
+    public Response getRoom(@QueryParam("room") int roomNumber) {
         Room result = hotelRepository.getRoom(roomNumber);
         if (result == null) {
             return Response.status(404).entity("Room not found.").build();
