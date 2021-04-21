@@ -5,13 +5,18 @@ import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
+import java.util.Properties;
 import java.util.Scanner;
 
 public class Main {
     // Base URI the Grizzly HTTP server will listen on
     public static final String BASE_URI = "http://localhost:8080/myapp/";
+
+    public static Properties configProperties;
 
     private static HttpServer restServer;
 
@@ -36,6 +41,13 @@ public class Main {
     }
 
     public static void main(String[] args) throws IOException {
+        configProperties = new Properties();
+
+        ClassLoader classLoader = Main.class.getClassLoader();
+
+        InputStream config = classLoader.getResourceAsStream("config.properties");
+        configProperties.load(config);
+
         startServer();
 
         Scanner kb = new Scanner(System.in);
