@@ -21,6 +21,8 @@ public class Hotel {
         this.id = id;
     }
 
+    private String name;
+
     public String getName() {
         return name;
     }
@@ -29,7 +31,46 @@ public class Hotel {
         this.name = name;
     }
 
-    private String name;
+    @Column(name = "air_conditioning")
+    private String airConditioning;
+
+    public String getAirConditioning() {
+        return airConditioning;
+    }
+
+    public void setAirConditioning(String airConditioning) {
+        this.airConditioning = airConditioning;
+    }
+
+    private String rating;
+
+    public String getRating() {
+        return rating;
+    }
+
+    public void setRating(String rating) {
+        this.rating = rating;
+    }
+
+    private String description;
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    private String address;
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "hotel")
     private Set<Room> rooms;

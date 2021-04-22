@@ -5,13 +5,15 @@ import com.thing.core.Room;
 import com.thing.impl.HotelRepositoryImpl;
 import com.thing.runtime.Main;
 
-import java.util.ArrayList;
-
 public class HTMLBuilder {
     public String getHotelAsHTML(Hotel hotel) {
         String template = Main.htmlTemplate;
         assert template != null;
         template = template.replaceAll("HOTEL_NAME", hotel.getName());
+        template = template.replaceFirst("DESCRIPTION", hotel.getDescription());
+        template = template.replaceFirst("RATING_", hotel.getRating());
+        template = template.replaceFirst("ADDRESS_", hotel.getAddress());
+        template = template.replaceFirst("AIR_CONDITIONING", hotel.getAirConditioning());
 
         StringBuilder rooms = new StringBuilder();
         for (Room room : hotel.getRooms()) {

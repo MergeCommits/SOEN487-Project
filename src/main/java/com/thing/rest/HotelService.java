@@ -49,9 +49,17 @@ public class HotelService {
     @Path("insert")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response insertHotel(@FormParam("name") String name) {
+    public Response insertHotel(@FormParam("name") String name,
+                                @FormParam("airConditioning") String airConditioning,
+                                @FormParam("rating") String rating,
+                                @FormParam("description") String description,
+                                @FormParam("address") String address) {
         Hotel newHotel = new Hotel();
         newHotel.setName(name);
+        newHotel.setAirConditioning(airConditioning);
+        newHotel.setDescription(description);
+        newHotel.setRating(rating);
+        newHotel.setAddress(address);
 
         hotelRepository.addOrReplaceHotel(newHotel);
         return Response.ok(newHotel).build();
@@ -78,12 +86,13 @@ public class HotelService {
             return Response.status(400).entity("Hotel with that name does not exist.").build();
         }
 
+        HTMLBuilder htmlBuilder = new HTMLBuilder();
+
         Email from = new Email(Main.configProperties.getProperty("from_email"));
         String subject = "Check out this hotel: " + hotel.getName();
         Email to = new Email(emailAddress);
 
-        HTMLBuilder htmlBuilder = new HTMLBuilder();
-        Content content = new Content("text/html", htmlBuilder.getHotelAsHTML(hotel));
+        Content content = new Content(MediaType.TEXT_HTML, htmlBuilder.getHotelAsHTML(hotel));
         Mail mail = new Mail(from, subject, to, content);
 
         SendGrid sg = new SendGrid(Main.configProperties.getProperty("sendgrid_api_key"));

@@ -11,6 +11,10 @@
     - Deletes a hotel.
     - Form Parameters
         - name (required)
+        - airConditioning (required)
+        - rating (required)
+        - description (required)
+        - address (required)
     - Responses
         - 200 on successful deletion.
         - 400 when the hotel is not found.
