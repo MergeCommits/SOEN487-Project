@@ -2,6 +2,7 @@ package com.thing.core;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.util.Objects;
 
 @XmlRootElement
@@ -45,6 +46,7 @@ public class Room {
     @JoinColumn(name = "hotel_id")
     private Hotel hotel;
 
+    @XmlTransient
     public Hotel getHotel() {
         return hotel;
     }

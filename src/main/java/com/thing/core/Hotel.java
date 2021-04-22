@@ -2,6 +2,7 @@ package com.thing.core;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.util.Objects;
 import java.util.Set;
 
@@ -75,6 +76,7 @@ public class Hotel {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "hotel")
     private Set<Room> rooms;
 
+    @XmlTransient
     public Set<Room> getRooms() {
         return rooms;
     }
